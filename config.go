@@ -2,7 +2,7 @@
 // Configuration file reader .ini file
 // By Motaz Abdel Azeem  code.sd
 // June 2017
-// Updated August 2019
+// Updated March 2020
 
 package codeutils
 
