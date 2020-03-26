@@ -125,9 +125,25 @@ func IsFileExists(fileName string) (exists bool) {
 	return
 }
 
-func getCurrentAppDirctory() string {
+func getCurrentAppDirctory() (dir string) {
+	dir = getAppDirctory()
+	if dir == "" {
+		dir = getWorkingDirectory()
+	}
+	return
+}
+
+func getAppDirctory() string {
 
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		println(err.Error())
+	}
+	return dir
+}
+
+func getWorkingDirectory() string {
+	dir, err := os.Getwd()
 	if err != nil {
 		println(err.Error())
 	}
