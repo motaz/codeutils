@@ -9,8 +9,6 @@ package codeutils
 import (
 	"os"
 	"strings"
-
-	"path/filepath"
 )
 
 func load(filename string, dest map[string]string) error {
@@ -57,7 +55,7 @@ func getConfigValue(configFile, name string) (value string, err error) {
 	value = ""
 
 	if !strings.Contains(configFile, string(os.PathSeparator)) {
-		configFile = getCurrentAppDirctory() + string(os.PathSeparator) + configFile
+		configFile = GetCurrentAppDir() + string(os.PathSeparator) + configFile
 	}
 	err = load(configFile, mymap)
 	if err != nil {
@@ -86,7 +84,7 @@ func SetConfigValue(configFile, name string, value string) (success bool) {
 	mymap := make(map[string]string)
 
 	if !strings.Contains(configFile, string(os.PathSeparator)) {
-		configFile = getCurrentAppDirctory() + string(os.PathSeparator) + configFile
+		configFile = GetCurrentAppDir() + string(os.PathSeparator) + configFile
 	}
 	load(configFile, mymap)
 
@@ -112,7 +110,7 @@ func SetConfigValue(configFile, name string, value string) (success bool) {
 func IsFileExists(fileName string) (exists bool) {
 
 	if !strings.Contains(fileName, string(os.PathSeparator)) {
-		fileName = getCurrentAppDirctory() + string(os.PathSeparator) + fileName
+		fileName = GetCurrentAppDir() + string(os.PathSeparator) + fileName
 	}
 
 	if _, err := os.Stat(fileName); err == nil {
@@ -123,29 +121,4 @@ func IsFileExists(fileName string) (exists bool) {
 		exists = false
 	}
 	return
-}
-
-func getCurrentAppDirctory() (dir string) {
-	dir = getAppDirctory()
-	if dir == "" {
-		dir = getWorkingDirectory()
-	}
-	return
-}
-
-func getAppDirctory() string {
-
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		println(err.Error())
-	}
-	return dir
-}
-
-func getWorkingDirectory() string {
-	dir, err := os.Getwd()
-	if err != nil {
-		println(err.Error())
-	}
-	return dir
 }
