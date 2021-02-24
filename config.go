@@ -12,18 +12,21 @@ import (
 )
 
 func load(filename string, dest map[string]string) error {
+
 	fi, err := os.Stat(filename)
 	if err != nil {
 		return err
 	}
+
 	f, err := os.Open(filename)
 	if err != nil {
 		return err
+	} else {
+		defer f.Close()
 	}
 	buff := make([]byte, fi.Size())
 	f.Read(buff)
 
-	f.Close()
 	str := string(buff)
 	if !strings.HasSuffix(str, "\n") {
 		str = str + "\n"
@@ -94,13 +97,13 @@ func SetConfigValue(configFile, name string, value string) (success bool) {
 
 	if err != nil {
 		return false
+	} else {
+		defer file.Close()
 	}
 	for key := range mymap {
 
 		file.WriteString(key + "=" + mymap[key] + "\n")
 	}
-
-	file.Close()
 
 	success = true
 	return

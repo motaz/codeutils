@@ -20,7 +20,7 @@ func GetCurrentAppDir() string {
 	return dir
 }
 
-//WriteToLog write to log file
+// WriteToLog write to log file
 func WriteToLog(event string, logFileName string) {
 
 	t := time.Now()
@@ -49,17 +49,21 @@ func WriteToLog(event string, logFileName string) {
 		}
 	}
 	var f *os.File
+	var err error
 	if old {
 		os.Remove(logname)
-		f, _ = os.OpenFile(logname, os.O_CREATE|os.O_RDWR, 0666)
+		f, err = os.OpenFile(logname, os.O_CREATE|os.O_RDWR, 0666)
 
 	} else {
-		f, _ = os.OpenFile(logname, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+		f, err = os.OpenFile(logname, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	}
-	_, er := f.WriteString(t.String()[1:22] + ": " + event + "\n")
-	if er != nil {
-		println("Error in writing log: ", er.Error())
+	if err == nil {
+		defer f.Close()
+
+		_, er := f.WriteString(t.String()[1:22] + ": " + event + "\n")
+		if er != nil {
+			println("Error in writing log: ", er.Error())
+		}
 	}
-	f.Close()
 
 }
