@@ -1,4 +1,6 @@
 // Write to log function
+// Updated Feb 2021
+
 package codeutils
 
 import (
@@ -49,7 +51,7 @@ func WriteToLog(event string, logFileName string) {
 		}
 	}
 	var f *os.File
-	var err error
+
 	if old {
 		os.Remove(logname)
 		f, err = os.OpenFile(logname, os.O_CREATE|os.O_RDWR, 0666)
