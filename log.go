@@ -1,5 +1,5 @@
 // Write to log function
-// Updated Feb 2021
+// Updated April 2021
 
 package codeutils
 
@@ -46,7 +46,7 @@ func WriteToLog(event string, logFileName string) {
 	logname = logFileName + "-" + strconv.Itoa(today) + ".log"
 	logstat, err := os.Stat(logname)
 	if err == nil {
-		if t.Month() != logstat.ModTime().Month() {
+		if t.Month() != logstat.ModTime().Month() || t.Year() != logstat.ModTime().Year() {
 			old = true
 		}
 	}

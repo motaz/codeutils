@@ -2,7 +2,7 @@
 // Configuration file reader .ini file
 // By Motaz Abdel Azeem  code.sd
 // June 2017
-// Updated Feb 2021
+// Updated April 2021
 
 package codeutils
 
@@ -62,7 +62,7 @@ func getConfigValue(configFile, name string) (value string, err error) {
 	}
 	err = load(configFile, mymap)
 	if err != nil {
-		println(err.Error())
+
 		return
 	} else if mymap[name] != "" {
 		value = mymap[name]
@@ -120,7 +120,6 @@ func IsFileExists(fileName string) (exists bool) {
 		exists = true
 
 	} else {
-		println("Error in isFileExists: " + err.Error())
 		exists = false
 	}
 	return
