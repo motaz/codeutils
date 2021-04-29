@@ -62,7 +62,7 @@ func WriteToLog(event string, logFileName string) {
 	if err == nil {
 		defer f.Close()
 
-		_, er := f.WriteString(t.String()[1:22] + ": " + event + "\n")
+		_, er := f.WriteString(t.String()[1:23] + ": " + event + "\n")
 		if er != nil {
 			println("Error in writing log: ", er.Error())
 		}

@@ -12,4 +12,5 @@ func TestTitle(t *testing.T) {
 	} else {
 		fmt.Println("aname: ", aname)
 	}
+	WriteToLog("test", "test")
 }
