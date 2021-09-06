@@ -1,5 +1,5 @@
 // Write to log function
-// Updated April 2021
+// Updated September 2021
 
 package codeutils
 
