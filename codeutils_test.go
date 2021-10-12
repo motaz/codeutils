@@ -5,6 +5,6 @@ import (
 )
 
 func TestTitle(t *testing.T) {
-	logdaytype = WEEKLYLOG
+	SetLogType(WEEKLYLOG)
 	WriteToLog("Third line", "test")
 }

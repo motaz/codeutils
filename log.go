@@ -17,6 +17,10 @@ const MONTHLYLOG = 0
 
 var logdaytype byte = MONTHLYLOG
 
+func SetLogType(alogtype byte) {
+	logdaytype = alogtype
+}
+
 // GetCurrentAppDir returns path from application running directory
 func GetCurrentAppDir() string {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
