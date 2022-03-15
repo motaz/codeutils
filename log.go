@@ -1,5 +1,5 @@
 // Write to log function
-// Updated Feb 2022
+// Updated March 2022
 
 package codeutils
 
@@ -24,7 +24,7 @@ func SetLogType(alogtype byte) {
 // GetCurrentAppDir returns path from application running directory
 func GetCurrentAppDir() string {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-	if strings.HasPrefix(dir, "/tmp/") {
+	if strings.HasPrefix(dir, "/tmp/") || strings.Contains(dir, "go-build") {
 		dir, _ = os.Getwd()
 
 	}
@@ -32,7 +32,7 @@ func GetCurrentAppDir() string {
 }
 
 // WriteToLog write to log file
-func WriteToLog(event string, logFileName string) {
+func WriteToLog(event string, logFileName string) (err error) {
 
 	t := time.Now()
 	var today string
@@ -51,14 +51,15 @@ func WriteToLog(event string, logFileName string) {
 		dir = GetCurrentAppDir() + string(os.PathSeparator) + "log"
 		logFileName = dir + string(os.PathSeparator) + logFileName
 	}
-	_, err := os.Stat(dir)
+	_, err = os.Stat(dir)
 	if (err != nil) && (os.IsNotExist(err)) {
-		os.Mkdir(dir, 0777)
+		err = os.Mkdir(dir, 0777)
 	}
 
 	// Check current log date, if it is old, overwrite it
 	logname = logFileName + "-" + today + ".log"
-	logstat, err := os.Stat(logname)
+	var logstat os.FileInfo
+	logstat, err = os.Stat(logname)
 	if err == nil {
 		if t.Month() != logstat.ModTime().Month() || t.Day() != logstat.ModTime().Day() {
 			old = true
@@ -76,10 +77,11 @@ func WriteToLog(event string, logFileName string) {
 	if err == nil {
 		defer f.Close()
 
-		_, er := f.WriteString(t.String()[1:23] + ": " + event + "\n")
-		if er != nil {
-			println("Error in writing log: ", er.Error())
+		_, err = f.WriteString(t.String()[1:23] + ": " + event + "\n")
+		if err != nil {
+			println("Error in writing log: ", err.Error())
 		}
 	}
+	return
 
 }
