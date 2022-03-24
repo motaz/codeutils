@@ -110,6 +110,14 @@ func SetConfigValue(configFile, name string, value string) (success bool) {
 
 }
 
+func getConfigWithDefault(configFile, name, defaultValue string) (value string) {
+	value = GetConfigValue(configFile, name)
+	if value == "" {
+		value = defaultValue
+	}
+	return
+}
+
 func IsFileExists(fileName string) (exists bool) {
 
 	if !strings.Contains(fileName, string(os.PathSeparator)) {
