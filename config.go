@@ -2,7 +2,7 @@
 // Configuration file reader .ini file
 // By Motaz Abdel Azeem  code.sd
 // June 2017
-// Updated April 2021
+// Updated March 2022
 
 package codeutils
 
@@ -111,6 +111,7 @@ func SetConfigValue(configFile, name string, value string) (success bool) {
 }
 
 func getConfigWithDefault(configFile, name, defaultValue string) (value string) {
+
 	value = GetConfigValue(configFile, name)
 	if value == "" {
 		value = defaultValue
