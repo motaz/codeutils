@@ -5,8 +5,7 @@ import (
 )
 
 func TestTitle(t *testing.T) {
-	SetLogType(WEEKLYLOG)
-	WriteToLog("Third line", "test")
-	println(GetCurrentAppDir())
-	println(GetMD5("help21"))
+	for i := 0; i < 100; i++ {
+		println(GetRandom(10))
+	}
 }
