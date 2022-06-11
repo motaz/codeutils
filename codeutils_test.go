@@ -1,10 +1,23 @@
 package codeutils
 
 import (
+	"fmt"
+
 	"testing"
 )
 
-func TestTitle(t *testing.T) {
-	println(FormatCommas(23009441))
+type Name struct {
+	Name string
+}
 
+func TestTitle(t *testing.T) {
+
+	headers := make(map[string]string)
+	headers["content-type"] = "application/json"
+	var aName Name
+	aName.Name = "Motaz"
+
+	result, status, err := CallURLAsGet("http://localhost", 10)
+
+	fmt.Printf("status code: %d\nerror: %s\nContents:\n%s", status, err, result)
 }
