@@ -79,7 +79,7 @@ func CallURL(req *http.Request, timeoutSec int) (result CallURLResult) {
 	return
 }
 
-func SetHeaderAuthentication(username, password string, req *http.Request) {
+func SetHeaderAuthentication(req *http.Request, username, password string) {
 
 	req.SetBasicAuth(username, password)
 
