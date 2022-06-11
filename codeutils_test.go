@@ -5,7 +5,6 @@ import (
 )
 
 func TestTitle(t *testing.T) {
-	for i := 0; i < 100; i++ {
-		println(GetRandom(10))
-	}
+	println(FormatCommas(23009441))
+
 }
