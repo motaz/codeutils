@@ -17,7 +17,7 @@ func TestTitle(t *testing.T) {
 	var aName Name
 	aName.Name = "Motaz"
 
-	result, status, err := CallURLAsGet("http://localhost", 10)
+	result := CallURLAsPost("http://localhost", nil, 10)
 
-	fmt.Printf("status code: %d\nerror: %s\nContents:\n%s", status, err, result)
+	fmt.Printf("Status code: %d\nerror: %s\nContents:\n%s", result.StatusCode, result.Err, result.Content)
 }

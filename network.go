@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+type CallURLResult struct {
+	Content    []byte
+	StatusCode int
+	Err        error
+}
+
 func GetRemoteIP(r *http.Request) (ip string) {
 
 	ip = r.RemoteAddr
@@ -53,7 +59,7 @@ func SetURLHeaders(req *http.Request, headers map[string]string) {
 	return
 }
 
-func CallURL(req *http.Request, timeoutSec int) (result []byte, statusCode int, err error) {
+func CallURL(req *http.Request, timeoutSec int) (result CallURLResult) {
 
 	timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 
@@ -61,12 +67,12 @@ func CallURL(req *http.Request, timeoutSec int) (result []byte, statusCode int, 
 		Timeout: timeout,
 	}
 	var response *http.Response
-	response, err = client.Do(req)
+	response, result.Err = client.Do(req)
 
-	if err == nil {
-		statusCode = response.StatusCode
+	if result.Err == nil {
+		result.StatusCode = response.StatusCode
 
-		result, err = ioutil.ReadAll(response.Body)
+		result.Content, result.Err = ioutil.ReadAll(response.Body)
 
 	}
 
@@ -79,20 +85,23 @@ func SetHeaderAuthentication(username, password string, req *http.Request) {
 
 }
 
-func CallURLAsGet(url string, timeoutSec int) (result []byte, statusCode int, err error) {
+func CallURLAsGet(url string, timeoutSec int) (result CallURLResult) {
 
-	req, err := PrepareURLCall(url, "GET", nil)
-	if err == nil {
-		result, statusCode, err = CallURL(req, timeoutSec)
+	var req *http.Request
+	req, result.Err = PrepareURLCall(url, "GET", nil)
+	if result.Err == nil {
+		result = CallURL(req, timeoutSec)
 	}
 	return
 }
 
-func CallURLAsPost(url string, contents []byte, timeoutSec int) (result []byte, statusCode int, err error) {
+func CallURLAsPost(url string, contents []byte, timeoutSec int) (result CallURLResult) {
 
-	req, err := PrepareURLCall(url, "POST", contents)
-	if err == nil {
-		result, statusCode, err = CallURL(req, timeoutSec)
+	var req *http.Request
+
+	req, result.Err = PrepareURLCall(url, "POST", contents)
+	if result.Err == nil {
+		result = CallURL(req, timeoutSec)
 	}
 	return
 }
