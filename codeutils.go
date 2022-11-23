@@ -1,4 +1,4 @@
 // codeutils project codeutils.go
-// version 1.0.14
-// Updated 11 June 2022
+// version 1.0.16
+// Updated 23 Nov 2022
 package codeutils

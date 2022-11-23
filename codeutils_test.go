@@ -12,12 +12,8 @@ type Name struct {
 
 func TestTitle(t *testing.T) {
 
-	headers := make(map[string]string)
-	headers["content-type"] = "application/json"
-	var aName Name
-	aName.Name = "Motaz"
-
-	result := CallURLAsPost("http://localhost", nil, 10)
-
-	fmt.Printf("Status code: %d\nerror: %s\nContents:\n%s", result.StatusCode, result.Err, result.Content)
+	//result := CallURLAsGet("http://localhost", 10)
+	req, _ := PrepareURLCall("http://localhost/sources", "GET", nil)
+	result := CallURL(req, 10)
+	fmt.Printf("%d\n%+s", result.StatusCode, string(result.Content))
 }

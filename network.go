@@ -40,6 +40,9 @@ func PrepareURLCall(url string, method string, content []byte) (req *http.Reques
 	}
 
 	req, err = http.NewRequest(method, url, bytes.NewBuffer(content))
+	if err == nil {
+		req.Close = true
+	}
 
 	return
 }
