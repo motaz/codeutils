@@ -1,5 +1,5 @@
-// Write to log function
-// Updated March 2022
+// WriteToLog function
+// Updated November 2022
 
 package codeutils
 
@@ -12,8 +12,9 @@ import (
 	"time"
 )
 
-const WEEKLYLOG = 1
 const MONTHLYLOG = 0
+const WEEKLYLOG = 1
+const HOURLYLOG = 2
 
 var logdaytype byte = MONTHLYLOG
 
@@ -35,11 +36,13 @@ func GetCurrentAppDir() string {
 func WriteToLog(event string, logFileName string) (err error) {
 
 	t := time.Now()
-	var today string
+	var logID string
 	if logdaytype == MONTHLYLOG {
-		today = strconv.Itoa(t.Day())
+		logID = strconv.Itoa(t.Day())
 	} else if logdaytype == WEEKLYLOG {
-		today = t.Format("Mon")
+		logID = t.Format("Mon")
+	} else if logdaytype == HOURLYLOG {
+		logID = strconv.Itoa(t.Hour())
 	}
 	old := false
 	var dir string
@@ -57,12 +60,17 @@ func WriteToLog(event string, logFileName string) (err error) {
 	}
 
 	// Check current log date, if it is old, overwrite it
-	logname = logFileName + "-" + today + ".log"
+	logname = logFileName + "-" + logID + ".log"
 	var logstat os.FileInfo
 	logstat, err = os.Stat(logname)
 	if err == nil {
 		if t.Month() != logstat.ModTime().Month() || t.Day() != logstat.ModTime().Day() {
 			old = true
+		}
+		if logdaytype == HOURLYLOG {
+			if t.Hour() != logstat.ModTime().Hour() {
+				old = true
+			}
 		}
 	}
 	var f *os.File
