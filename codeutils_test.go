@@ -11,6 +11,8 @@ type Name struct {
 
 func TestTitle(t *testing.T) {
 
-	num := FormatFloatCommas(12340001.12, 1)
+	num := FormatFloatCommas(34512340001.12309, 2)
+	fmt.Println(num)
+	num = FormatCommas(1922000)
 	fmt.Println(num)
 }
