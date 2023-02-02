@@ -1,6 +1,7 @@
 package codeutils
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -10,6 +11,6 @@ type Name struct {
 
 func TestTitle(t *testing.T) {
 
-	SetLogType(HOURLYLOG)
-	WriteToLog("second line", "testhours")
+	num := FormatFloatCommas(12340001.12, 1)
+	fmt.Println(num)
 }
