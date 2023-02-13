@@ -15,14 +15,18 @@ func FormatCommas(num int32) (formatedNum string) {
 
 func FormatFloatCommas(num float64, digits int) (formatedNum string) {
 
-	formatedNum = fmt.Sprintf("%0.0f", num)
+	digitsStr := strconv.Itoa(digits)
+
+	formatedNum = fmt.Sprintf("%0."+digitsStr+"f", num)
 	re := regexp.MustCompile("(\\d+)(\\d{3})")
 	for n := ""; n != formatedNum; {
 		n = formatedNum
 		formatedNum = re.ReplaceAllString(formatedNum, "$1,$2")
 	}
 	if digits > 0 {
-		digitsStr := strconv.Itoa(digits)
+		if strings.Contains(formatedNum, ".") {
+			formatedNum = formatedNum[:strings.Index(formatedNum, ".")]
+		}
 
 		precesion := fmt.Sprintf("%0."+digitsStr+"f", num)
 		formatedNum += precesion[strings.Index(precesion, "."):]
