@@ -11,7 +11,7 @@ type Name struct {
 
 func TestTitle(t *testing.T) {
 
-	num := FormatFloatCommas(1236689.799, 5)
+	num, _ := StrToDate("2002-10-08")
 	fmt.Println(num)
 
 }

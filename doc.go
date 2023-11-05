@@ -2,7 +2,7 @@
 
 /*
 codeutils document
- Updated November 2022
- v1.0.17
+ Updated November 2023
+ v1.0.21
 */
 package codeutils

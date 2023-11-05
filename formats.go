@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func FormatCommas(num int32) (formatedNum string) {
@@ -31,5 +32,29 @@ func FormatFloatCommas(num float64, digits int) (formatedNum string) {
 		precesion := fmt.Sprintf("%0."+digitsStr+"f", num)
 		formatedNum += precesion[strings.Index(precesion, "."):]
 	}
+	return
+}
+
+func StrToTime(timeStr string) (timeResult time.Time, err error) {
+
+	timeResult, err = time.Parse(time.DateTime, timeStr)
+	return
+}
+
+func StrToDate(dateStr string) (dateResult time.Time, err error) {
+
+	dateResult, err = time.Parse(time.DateOnly, dateStr)
+	return
+}
+
+func TimeToStr(atime time.Time) (result string) {
+
+	result = atime.Format(time.DateTime)
+	return
+}
+
+func DateToStr(adate time.Time) (result string) {
+
+	result = adate.Format(time.DateOnly)
 	return
 }
