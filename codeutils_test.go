@@ -12,7 +12,7 @@ type Name struct {
 func TestTitle(t *testing.T) {
 
 	key := GetMD5("simple")
-	enc, err := EncryptText(key, "https://shahid.mbc.net/en/widgets/deal-landing/N2ADSPGOF1?code=B1ALcWn5dMn13123456")
+	enc, err := EncryptText(key, "this is my source text")
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
