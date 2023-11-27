@@ -37,24 +37,24 @@ func FormatFloatCommas(num float64, digits int) (formatedNum string) {
 
 func StrToTime(timeStr string) (timeResult time.Time, err error) {
 
-	timeResult, err = time.Parse(time.DateTime, timeStr)
+	timeResult, err = time.Parse("2006-01-02 15:04:05", timeStr)
 	return
 }
 
 func StrToDate(dateStr string) (dateResult time.Time, err error) {
 
-	dateResult, err = time.Parse(time.DateOnly, dateStr)
+	dateResult, err = time.Parse("2006-01-02", dateStr)
 	return
 }
 
 func TimeToStr(atime time.Time) (result string) {
 
-	result = atime.Format(time.DateTime)
+	result = atime.Format("2006-01-02 15:04:05")
 	return
 }
 
 func DateToStr(adate time.Time) (result string) {
 
-	result = adate.Format(time.DateOnly)
+	result = adate.Format("2006-01-02")
 	return
 }
