@@ -110,7 +110,7 @@ func SetConfigValue(configFile, name string, value string) (success bool) {
 
 }
 
-func getConfigWithDefault(configFile, name, defaultValue string) (value string) {
+func GetConfigWithDefault(configFile, name, defaultValue string) (value string) {
 
 	value = GetConfigValue(configFile, name)
 	if value == "" {
