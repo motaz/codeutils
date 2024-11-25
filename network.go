@@ -77,6 +77,9 @@ func CallURL(req *http.Request, timeoutSec int) (result CallURLResult) {
 
 		result.Content, result.Err = ioutil.ReadAll(response.Body)
 
+	} else {
+		result.StatusCode = http.StatusInternalServerError
+
 	}
 
 	return

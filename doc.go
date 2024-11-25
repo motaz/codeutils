@@ -3,7 +3,7 @@
 /*
 codeutils document
 
-	Updated May 2024
-	v1.0.25
+	Updated Nov 2024
+	v1.0.26
 */
 package codeutils
