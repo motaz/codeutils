@@ -57,9 +57,8 @@ func getConfigValue(configFile, name string) (value string, err error) {
 	mymap := make(map[string]string)
 	value = ""
 
-	if !strings.Contains(configFile, string(os.PathSeparator)) {
-		configFile = GetCurrentAppDir() + string(os.PathSeparator) + configFile
-	}
+	configFile = getFullPathConfigFile(configFile)
+
 	err = load(configFile, mymap)
 	if err != nil {
 
