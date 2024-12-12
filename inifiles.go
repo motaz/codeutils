@@ -31,38 +31,45 @@ func getSectionFromLine(line string) (section string) {
 
 func ReadINIAsInt(filename, section, key string) (value int, err error) {
 
-	valueStr := ReadINIValue(filename, section, key, "")
-	if valueStr == "" {
-		err = errors.New("Not found")
-	} else {
-		value, err = strconv.Atoi(valueStr)
+	var valueStr string
+	valueStr, err = ReadINIValue(filename, section, key, "")
+	if err == nil {
+		if valueStr == "" {
+			err = errors.New("Not found")
+		} else {
+			value, err = strconv.Atoi(valueStr)
+		}
 	}
 	return
 }
 
 func ReadINIAsBool(filename, section, key string) (value bool, err error) {
 
-	valueStr := ReadINIValue(filename, section, key, "")
-	valueStr = strings.TrimSpace(strings.ToLower(valueStr))
-	if valueStr == "" {
-		err = errors.New("Not found")
-	} else if valueStr == "yes" {
-		value = true
-	} else if valueStr == "no" {
-		value = false
-	} else {
-		value, err = strconv.ParseBool(valueStr)
+	var valueStr string
+	valueStr, err = ReadINIValue(filename, section, key, "")
+	if err == nil {
+		valueStr = strings.TrimSpace(strings.ToLower(valueStr))
+		if valueStr == "" {
+			err = errors.New("Not found")
+		} else if valueStr == "yes" {
+			value = true
+		} else if valueStr == "no" {
+			value = false
+		} else {
+			value, err = strconv.ParseBool(valueStr)
+		}
 	}
 	return
 }
 
-func ReadINIValue(filename, section, key, defaultValue string) (value string) {
+func ReadINIValue(filename, section, key, defaultValue string) (value string, err error) {
 
 	section = strings.ToLower(section)
 	section = strings.TrimSpace(section)
 	value = defaultValue
 	key = strings.ToLower(key)
-	lines, err := readFileAsLines(filename)
+	var lines []string
+	lines, err = readFileAsLines(filename)
 	if err == nil && lines != nil {
 		foundSection := ""
 		for _, line := range lines {
@@ -116,10 +123,11 @@ func readFileAsLines(filename string) (lines []string, err error) {
 	return
 }
 
-func ReadINISections(filename string) (sections []string) {
+func ReadINISections(filename string) (sections []string, err error) {
 
 	sections = make([]string, 0)
-	lines, err := readFileAsLines(filename)
+	var lines []string
+	lines, err = readFileAsLines(filename)
 	if err == nil && lines != nil {
 		foundSection := ""
 		for _, line := range lines {
@@ -137,24 +145,29 @@ func ReadINISections(filename string) (sections []string) {
 	return
 }
 
-func ReadINISectionsKeys(filename, section string) (keys []string) {
+func ReadINISectionsKeys(filename, section string) (keys []string, err error) {
 
 	keys = make([]string, 0)
-	lines, err := readFileAsLines(filename)
+	var lines []string
+	lines, err = readFileAsLines(filename)
 	if err == nil && lines != nil {
 		foundSection := ""
 		for _, line := range lines {
 			line = strings.TrimSpace(line)
-			if lineIsNotCommented(line) {
+			if lineIsNotCommented(line) && strings.TrimSpace(line) != "" {
 				if lineIsSection(line) {
 					foundSection = getSectionFromLine(line)
-				}
-				if foundSection == section && strings.Index(line, "=") > 1 {
-					akey := line[:strings.Index(line, "=")]
+				} else {
+					if foundSection == section {
+						akey := strings.TrimSpace(line)
+						if strings.Contains(akey, "=") {
+							akey = akey[:strings.Index(akey, "=")]
 
-					akey = strings.TrimSpace(akey)
-					keys = append(keys, akey)
+							akey = strings.TrimSpace(akey)
+						}
+						keys = append(keys, akey)
 
+					}
 				}
 
 			}
