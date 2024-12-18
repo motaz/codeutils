@@ -14,7 +14,7 @@ func FormatCommas(num int32) (formatedNum string) {
 	return
 }
 
-func FormatFloatCommas(num float64, digits int) (formatedNum string) {
+func callFormatFloatCommas(num float64, digits int, trim bool) (formatedNum string) {
 
 	digitsStr := strconv.Itoa(digits)
 
@@ -28,10 +28,24 @@ func FormatFloatCommas(num float64, digits int) (formatedNum string) {
 		if strings.Contains(formatedNum, ".") {
 			formatedNum = formatedNum[:strings.Index(formatedNum, ".")]
 		}
-
 		precesion := fmt.Sprintf("%0."+digitsStr+"f", num)
-		formatedNum += precesion[strings.Index(precesion, "."):]
+		precesion = precesion[strings.Index(precesion, "."):]
+		if !trim || strings.Trim(precesion, "0") != "." {
+			formatedNum += precesion
+		}
 	}
+	return
+}
+
+func FormatFloatCommasTrim(num float64, digits int) (formatedNum string) {
+
+	formatedNum = callFormatFloatCommas(num, digits, true)
+	return
+}
+
+func FormatFloatCommas(num float64, digits int) (formatedNum string) {
+
+	formatedNum = callFormatFloatCommas(num, digits, false)
 	return
 }
 
