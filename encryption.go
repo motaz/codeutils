@@ -3,102 +3,106 @@ package codeutils
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	"encoding/hex"
+	"crypto/sha256"
+	"encoding/base64"
+	"errors"
+
+	"fmt"
+
 	"strings"
 )
 
-func padding16(text, fill string) (out string) {
-
-	for len(text) < 16 {
-		text += fill
-	}
-	out = text
-	return
+// deriveKey generates a 256-bit key from a password using SHA-256.
+func deriveKey(password string) []byte {
+	hash := sha256.Sum256([]byte(password))
+	return hash[:]
 }
 
-func EncryptText(akey, plaintext string) (crypted string, err error) {
+// encryptChunk encrypts a single chunk of text using AES-GCM.
+func encryptChunk(password, plaintext string) (string, error) {
 
-	crypted = ""
-	for i := 0; i < 50000; i++ {
-		var part string
-		if len(plaintext) > 16 {
-			part = plaintext[:16]
+	key := deriveKey(password)
 
-		} else {
-			part = plaintext
-		}
-		plaintext = plaintext[len(part):]
-		part = padding16(part, "`")
-		var enc string
-		enc, err = EncryptAES(akey, part)
-		crypted += enc
-		if plaintext == "" {
-			break
-		}
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", fmt.Errorf("failed to create cipher block: %w", err)
 	}
-	return
+
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", fmt.Errorf("failed to create GCM cipher: %w", err)
+	}
+
+	nonce := make([]byte, aesGCM.NonceSize())
+	encrypted := aesGCM.Seal(nonce, nonce, []byte(plaintext), nil)
+
+	return base64.StdEncoding.EncodeToString(encrypted), nil
 }
 
-func DecryptText(akey, crypted string) (plaintext string, err error) {
+// decryptChunk decrypts a single Base64-encoded chunk using AES-GCM.
+func decryptChunk(password, encodedCiphertext string) (string, error) {
 
-	plaintext = ""
-	for i := 0; i < 50000; i++ {
-		var part string
-		if len(crypted) > 32 {
-			part = crypted[:32]
+	key := deriveKey(password)
 
-		} else {
-			part = crypted
-		}
-		crypted = crypted[len(part):]
-		var plain string
-		plain, err = DecryptAES(akey, part)
-		if crypted == "" {
-			for len(plain) > 0 && strings.HasSuffix(plain, "`") {
-				plain = strings.TrimSuffix(plain, "`")
-			}
-		}
-		plaintext += plain
-		if crypted == "" {
-			break
-		}
-
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", fmt.Errorf("failed to create cipher block: %w", err)
 	}
-	return
+
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", fmt.Errorf("failed to create GCM cipher: %w", err)
+	}
+
+	ciphertext, err := base64.StdEncoding.DecodeString(encodedCiphertext)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode Base64 ciphertext: %w", err)
+	}
+
+	if len(ciphertext) < aesGCM.NonceSize() {
+		return "", errors.New("ciphertext too short")
+	}
+
+	nonce, ciphertext := ciphertext[:aesGCM.NonceSize()], ciphertext[aesGCM.NonceSize():]
+
+	plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return "", fmt.Errorf("decryption failed: %w", err)
+	}
+
+	return string(plaintext), nil
 }
 
-func EncryptAES(akey string, plaintext string) (crypted string, err error) {
+// encryptText encrypts the entire text in chunks and concatenates the results.
+func EncryptText(password, plaintext string) (string, error) {
 
-	// create cipher
-	key := []byte(akey)
-	var c cipher.Block
-	c, err = aes.NewCipher(key)
-	if err == nil {
+	parts := strings.SplitAfter(plaintext, "\n")
+	var encryptedParts []string
 
-		// allocate space for ciphered data
-		out := make([]byte, len(plaintext))
-
-		// encrypt
-		c.Encrypt(out, []byte(plaintext))
-		// return hex string
-		crypted = hex.EncodeToString(out)
+	for _, part := range parts {
+		encryptedChunk, err := encryptChunk(password, part)
+		if err != nil {
+			return "", err
+		}
+		encryptedParts = append(encryptedParts, encryptedChunk)
 	}
-	return
+
+	return strings.Join(encryptedParts, "|"), nil
 }
 
-func DecryptAES(akey string, ct string) (plaintext string, err error) {
+// DecryptText decrypts concatenated chunks and reassembles the plaintext.
+func DecryptText(password, encodedCiphertext string) (string, error) {
 
-	key := []byte(akey)
-	var ciphertext []byte
-	ciphertext, err = hex.DecodeString(ct)
-	var c cipher.Block
-	c, err = aes.NewCipher(key)
-	if err == nil {
+	parts := strings.Split(encodedCiphertext, "|")
+	var decryptedParts []string
 
-		pt := make([]byte, len(ciphertext))
-		c.Decrypt(pt, ciphertext)
-
-		plaintext = string(pt[:])
+	for _, part := range parts {
+		decryptedChunk, err := decryptChunk(password, part)
+		if err != nil {
+			return "", err
+		}
+		decryptedParts = append(decryptedParts, decryptedChunk)
 	}
-	return
+
+	return strings.Join(decryptedParts, ""), nil
 }
