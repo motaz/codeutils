@@ -2,6 +2,7 @@ package codeutils
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -71,4 +72,59 @@ func DateToStr(adate time.Time) (result string) {
 
 	result = adate.Format("2006-01-02")
 	return
+}
+
+func FormatBytes(bytes int64) string {
+	if bytes < 0 {
+		return "Invalid size (negative bytes)"
+	}
+	if bytes == 0 {
+		return "0 B"
+	}
+
+	const (
+		KB = 1024
+		MB = 1024 * KB
+		GB = 1024 * MB
+		TB = 1024 * GB
+		PB = 1024 * TB
+		EB = 1024 * PB // Exabyte
+	)
+
+	var (
+		value float64
+		unit  string
+	)
+
+	switch {
+	case bytes < KB:
+		value = float64(bytes)
+		unit = "B"
+	case bytes < MB:
+		value = float64(bytes) / KB
+		unit = "KB"
+	case bytes < GB:
+		value = float64(bytes) / MB
+		unit = "MB"
+	case bytes < TB:
+		value = float64(bytes) / GB
+		unit = "GB"
+	case bytes < PB:
+		value = float64(bytes) / TB
+		unit = "TB"
+	case bytes < EB:
+		value = float64(bytes) / PB
+		unit = "PB"
+	default:
+		// For sizes larger than Exabytes, we can continue the pattern or cap it.
+		// Here, we'll cap it at EB for simplicity, but you could extend to ZB, YB.
+		value = float64(bytes) / EB
+		unit = "EB"
+	}
+
+	// Format to one decimal place if it's not a whole number, otherwise no decimal.
+	if value == math.Trunc(value) {
+		return fmt.Sprintf("%.0f %s", value, unit)
+	}
+	return fmt.Sprintf("%.1f %s", value, unit)
 }

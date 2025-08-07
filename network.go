@@ -26,6 +26,11 @@ func GetRemoteIP(r *http.Request) (ip string) {
 		ipt := r.Header.Get("X-Forwarded-For")
 		if ipt != "" {
 			ip = ipt
+		} else {
+			ipt = r.Header.Get("X-Real-IP")
+			if ipt != "" {
+				ip = ipt
+			}
 		}
 	}
 
