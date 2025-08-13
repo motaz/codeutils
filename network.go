@@ -12,6 +12,7 @@ import (
 type CallURLResult struct {
 	Content    []byte
 	StatusCode int
+	Status     string
 	Err        error
 }
 
@@ -79,6 +80,7 @@ func CallURL(req *http.Request, timeoutSec int) (result CallURLResult) {
 
 	if result.Err == nil {
 		result.StatusCode = response.StatusCode
+		result.Status = response.Status
 
 		result.Content, result.Err = ioutil.ReadAll(response.Body)
 
