@@ -128,3 +128,17 @@ func FormatBytes(bytes int64) string {
 	}
 	return fmt.Sprintf("%.1f %s", value, unit)
 }
+
+func GetLocalTimeAsUTC() time.Time {
+
+	return GetATimeAsUTC(time.Now())
+}
+
+func GetATimeAsUTC(atime time.Time) time.Time {
+
+	return time.Date(
+		atime.Year(), atime.Month(), atime.Day(),
+		atime.Hour(), atime.Minute(), atime.Second(), atime.Nanosecond(),
+		time.UTC,
+	)
+}
