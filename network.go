@@ -2,8 +2,9 @@ package codeutils
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -68,21 +69,32 @@ func SetURLHeaders(req *http.Request, headers map[string]string) {
 	return
 }
 
+var defaultTransport = http.DefaultTransport.(*http.Transport).Clone()
+func init (){
+	defaultTransport.MaxIdleConns = 100
+	defaultTransport.MaxIdleConnsPerHost = 10
+	defaultTransport.IdleConnTimeout = 20 * time.Second
+}
+var defaultClient = &http.Client{
+	Transport: defaultTransport,
+}
+
 func CallURL(req *http.Request, timeoutSec int) (result CallURLResult) {
 
 	timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+	ctx, cancel := context.WithTimeout(req.Context(), timeout)
+	defer cancel()
 
-	client := http.Client{
-		Timeout: timeout,
-	}
+	req = req.WithContext(ctx)
 	var response *http.Response
-	response, result.Err = client.Do(req)
+	response, result.Err = defaultClient.Do(req)
 
 	if result.Err == nil {
+		defer response.Body.Close()
 		result.StatusCode = response.StatusCode
 		result.Status = response.Status
 
-		result.Content, result.Err = ioutil.ReadAll(response.Body)
+		result.Content, result.Err = io.ReadAll(response.Body)
 
 	} else {
 		result.StatusCode = http.StatusInternalServerError
