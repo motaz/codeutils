@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"io"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -55,9 +56,31 @@ func PrepareURLCall(url string, method string, content []byte) (req *http.Reques
 }
 
 func SkipHTTPSVerfication() {
+	defaultTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+}
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+// prefer : 250, 10 , 5
+func ApplyTransportHttp2Options(maxConcurStream int, pingTimeout int, SendingPingTimeout int, ForceHTTP2 bool){
+		defaultTransport.ForceAttemptHTTP2=   true
+		defaultTransport.HTTP2= &http.HTTP2Config{
+		  MaxConcurrentStreams: 250,
+			SendPingTimeout: time.Second * 5,
+			PingTimeout:     time.Second * 10,
+	}
+	
+}
+// prefer : 100, 10, 20, 5, 5
+func ApplyTransportConnectionsOptions(maxIdleConn, maxIdleConnPerHost, IdleConnTimeout, dialerTimeout, dialerkeepalive int )  {
+	defaultTransport.MaxIdleConns = maxIdleConn
+	defaultTransport.MaxIdleConnsPerHost = maxIdleConnPerHost
+	defaultTransport.IdleConnTimeout = time.Duration(IdleConnTimeout) * time.Second
 
+	dialer := &net.Dialer{
+		Timeout:   5 * time.Second,
+		KeepAlive: time.Second * 5,
+	}
+	 defaultTransport.DialContext = dialer.DialContext
+	
 }
 
 func SetURLHeaders(req *http.Request, headers map[string]string) {
@@ -70,11 +93,6 @@ func SetURLHeaders(req *http.Request, headers map[string]string) {
 }
 
 var defaultTransport = http.DefaultTransport.(*http.Transport).Clone()
-func init (){
-	defaultTransport.MaxIdleConns = 100
-	defaultTransport.MaxIdleConnsPerHost = 10
-	defaultTransport.IdleConnTimeout = 20 * time.Second
-}
 var defaultClient = &http.Client{
 	Transport: defaultTransport,
 }
