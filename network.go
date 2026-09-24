@@ -61,11 +61,11 @@ func SkipHTTPSVerfication() {
 
 // prefer : 250, 10 , 5
 func ApplyTransportHttp2Options(maxConcurStream int, pingTimeout int, SendingPingTimeout int, ForceHTTP2 bool){
-		defaultTransport.ForceAttemptHTTP2=   true
+		defaultTransport.ForceAttemptHTTP2=   ForceHTTP2
 		defaultTransport.HTTP2= &http.HTTP2Config{
-		  MaxConcurrentStreams: 250,
-			SendPingTimeout: time.Second * 5,
-			PingTimeout:     time.Second * 10,
+		  MaxConcurrentStreams: maxConcurStream,
+			SendPingTimeout: time.Second * time.Duration(SendingPingTimeout),
+			PingTimeout:     time.Second * time.Duration(pingTimeout),
 	}
 	
 }
@@ -76,8 +76,8 @@ func ApplyTransportConnectionsOptions(maxIdleConn, maxIdleConnPerHost, IdleConnT
 	defaultTransport.IdleConnTimeout = time.Duration(IdleConnTimeout) * time.Second
 
 	dialer := &net.Dialer{
-		Timeout:   5 * time.Second,
-		KeepAlive: time.Second * 5,
+		Timeout:   time.Duration(dialerTimeout) * time.Second,
+		KeepAlive: time.Second * time.Duration(dialerkeepalive),
 	}
 	 defaultTransport.DialContext = dialer.DialContext
 	
