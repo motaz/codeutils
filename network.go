@@ -60,17 +60,18 @@ func SkipHTTPSVerfication() {
 }
 
 // prefer : 250, 10 , 5
-func ApplyTransportHttp2Options(maxConcurStream int, pingTimeout int, SendingPingTimeout int, ForceHTTP2 bool){
-		defaultTransport.ForceAttemptHTTP2=   ForceHTTP2
-		defaultTransport.HTTP2= &http.HTTP2Config{
-		  MaxConcurrentStreams: maxConcurStream,
-			SendPingTimeout: time.Second * time.Duration(SendingPingTimeout),
-			PingTimeout:     time.Second * time.Duration(pingTimeout),
+func ApplyTransportHttp2Options(maxConcurStream int, pingTimeout int, SendingPingTimeout int, ForceHTTP2 bool) {
+	defaultTransport.ForceAttemptHTTP2 = ForceHTTP2
+	defaultTransport.HTTP2 = &http.HTTP2Config{
+		MaxConcurrentStreams: maxConcurStream,
+		SendPingTimeout:      time.Second * time.Duration(SendingPingTimeout),
+		PingTimeout:          time.Second * time.Duration(pingTimeout),
 	}
-	
+
 }
+
 // prefer : 100, 10, 20, 5, 5
-func ApplyTransportConnectionsOptions(maxIdleConn, maxIdleConnPerHost, IdleConnTimeout, dialerTimeout, dialerkeepalive int )  {
+func ApplyTransportConnectionsOptions(maxIdleConn, maxIdleConnPerHost, IdleConnTimeout, dialerTimeout, dialerkeepalive int) {
 	defaultTransport.MaxIdleConns = maxIdleConn
 	defaultTransport.MaxIdleConnsPerHost = maxIdleConnPerHost
 	defaultTransport.IdleConnTimeout = time.Duration(IdleConnTimeout) * time.Second
@@ -79,8 +80,8 @@ func ApplyTransportConnectionsOptions(maxIdleConn, maxIdleConnPerHost, IdleConnT
 		Timeout:   time.Duration(dialerTimeout) * time.Second,
 		KeepAlive: time.Second * time.Duration(dialerkeepalive),
 	}
-	 defaultTransport.DialContext = dialer.DialContext
-	
+	defaultTransport.DialContext = dialer.DialContext
+
 }
 
 func SetURLHeaders(req *http.Request, headers map[string]string) {
