@@ -90,7 +90,6 @@ func SetURLHeaders(req *http.Request, headers map[string]string) {
 		req.Header.Add(headerKey, headerValue)
 	}
 
-	return
 }
 
 var defaultTransport = http.DefaultTransport.(*http.Transport).Clone()

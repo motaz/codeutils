@@ -227,7 +227,8 @@ func SetIniValue(filename, section, key, value string) error {
 		}
 
 		// Write the line to the buffer
-		buffer.WriteString(line + "\n")
+		buffer.WriteString(line)
+		buffer.WriteByte('\n')
 	}
 
 	// If the target section was not found, add it at the end of the file

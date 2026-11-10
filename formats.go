@@ -20,7 +20,7 @@ func callFormatFloatCommas(num float64, digits int, trim bool) (formatedNum stri
 	digitsStr := strconv.Itoa(digits)
 
 	formatedNum = fmt.Sprintf("%0."+digitsStr+"f", num)
-	re := regexp.MustCompile("(\\d+)(\\d{3})")
+	re := regexp.MustCompile(`(\d+)(\d{3})`)
 	for n := ""; n != formatedNum; {
 		n = formatedNum
 		formatedNum = re.ReplaceAllString(formatedNum, "$1,$2")
